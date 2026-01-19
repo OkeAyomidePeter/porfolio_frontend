@@ -10,6 +10,7 @@ import {
   likeBlog,
   type Blog as BlogType,
 } from "@/lib/data-utils";
+import { Markdown } from "@/components/markdown";
 
 const LIKED_BLOGS_KEY = "liked_blog_ids";
 
@@ -27,7 +28,7 @@ export function BlogPost() {
     if (!id) return;
     try {
       const likedBlogs = JSON.parse(
-        localStorage.getItem(LIKED_BLOGS_KEY) || "[]"
+        localStorage.getItem(LIKED_BLOGS_KEY) || "[]",
       );
       setLiked(likedBlogs.includes(Number(id)));
     } catch (error) {
@@ -102,7 +103,7 @@ export function BlogPost() {
       // Store in localStorage to prevent duplicate likes
       try {
         const likedBlogs = JSON.parse(
-          localStorage.getItem(LIKED_BLOGS_KEY) || "[]"
+          localStorage.getItem(LIKED_BLOGS_KEY) || "[]",
         );
         if (!likedBlogs.includes(Number(id))) {
           likedBlogs.push(Number(id));
@@ -117,92 +118,6 @@ export function BlogPost() {
     } finally {
       setIsLiking(false);
     }
-  };
-
-  const renderContent = (content: string) => {
-    const lines = content.split("\n");
-    return lines.map((line, index) => {
-      if (line.startsWith("[video:")) {
-        const match = line.match(/\[video:(youtube|vimeo):([^\]]+)\]/);
-        if (match) {
-          const [, platform, videoId] = match;
-          if (platform === "youtube") {
-            return (
-              <div
-                key={index}
-                className="my-8 aspect-video w-full overflow-hidden rounded-lg"
-              >
-                <iframe
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  title="YouTube video player"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="h-full w-full"
-                />
-              </div>
-            );
-          }
-          if (platform === "vimeo") {
-            return (
-              <div
-                key={index}
-                className="my-8 aspect-video w-full overflow-hidden rounded-lg"
-              >
-                <iframe
-                  src={`https://player.vimeo.com/video/${videoId}`}
-                  title="Vimeo video player"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                  className="h-full w-full"
-                />
-              </div>
-            );
-          }
-        }
-      }
-      if (line.startsWith("[image:")) {
-        const match = line.match(/\[image:([^\]]+)\]/);
-        if (match) {
-          return (
-            <img
-              key={index}
-              src={match[1]}
-              alt=""
-              className="my-8 w-full rounded-lg"
-            />
-          );
-        }
-      }
-      if (line.startsWith("## ")) {
-        return (
-          <h2 key={index} className="text-2xl font-bold mt-8 mb-4">
-            {line.replace("## ", "")}
-          </h2>
-        );
-      }
-      if (line.startsWith("### ")) {
-        return (
-          <h3 key={index} className="text-xl font-semibold mt-6 mb-3">
-            {line.replace("### ", "")}
-          </h3>
-        );
-      }
-      if (line.startsWith("- ")) {
-        return (
-          <li key={index} className="ml-6 list-disc">
-            {line.replace("- ", "")}
-          </li>
-        );
-      }
-      if (line.trim() === "") {
-        return <br key={index} />;
-      }
-      return (
-        <p key={index} className="mb-4 leading-7">
-          {line}
-        </p>
-      );
-    });
   };
 
   return (
@@ -253,8 +168,8 @@ export function BlogPost() {
 
         <Separator />
 
-        <div className="prose prose-lg dark:prose-invert max-w-none">
-          {renderContent(post.content)}
+        <div className="space-y-4">
+          <Markdown content={post.content} />
         </div>
 
         <Separator />
@@ -270,8 +185,8 @@ export function BlogPost() {
             {isLiking
               ? "Liking..."
               : liked
-              ? `Liked (${post.likes})`
-              : `Like (${post.likes})`}
+                ? `Liked (${post.likes})`
+                : `Like (${post.likes})`}
           </Button>
           {liked && (
             <p className="text-sm text-muted-foreground">

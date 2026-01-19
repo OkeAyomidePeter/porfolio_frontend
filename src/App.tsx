@@ -11,6 +11,9 @@ import { Certifications } from "@/pages/certifications";
 import { About } from "@/pages/about";
 import { Contact } from "@/pages/contact";
 import { CV } from "@/pages/cv";
+import { Papers } from "@/pages/papers";
+import { PaperDetail } from "@/pages/paper-detail";
+import { ProjectDetail } from "@/pages/project-detail";
 import NotFoundPage from "@/pages/notfound";
 import { AdminLogin } from "@/pages/admin/login";
 import { AdminDashboard } from "@/pages/admin/dashboard";
@@ -21,6 +24,8 @@ import { BlogForm } from "@/pages/admin/blog-form";
 import { AdminCertifications } from "@/pages/admin/certifications";
 import { CertificationForm } from "@/pages/admin/certification-form";
 import { AdminProfile } from "@/pages/admin/profile";
+import { AdminPapers } from "@/pages/admin/papers";
+import { PaperForm } from "@/pages/admin/paper-form";
 import { AdminCV } from "@/pages/admin/cv";
 
 function App() {
@@ -38,6 +43,9 @@ function App() {
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
             <Route path="cv" element={<CV />} />
+            <Route path="papers" element={<Papers />} />
+            <Route path="papers/:id" element={<PaperDetail />} />
+            <Route path="projects/:id" element={<ProjectDetail />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
 
@@ -62,6 +70,9 @@ function App() {
             <Route path="certifications/new" element={<CertificationForm />} />
             <Route path="certifications/:id" element={<CertificationForm />} />
             <Route path="profile" element={<AdminProfile />} />
+            <Route path="papers" element={<AdminPapers />} />
+            <Route path="papers/new" element={<PaperForm />} />
+            <Route path="papers/:id" element={<PaperForm />} />
             <Route path="cv" element={<AdminCV />} />
           </Route>
         </Routes>

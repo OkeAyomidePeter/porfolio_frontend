@@ -8,11 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Github, ExternalLink, Twitter } from "lucide-react";
+import { Github, ExternalLink, Twitter, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { buildAssetUrl } from "@/lib/data-utils";
 
 interface ProjectCardProps {
+  id: number;
   title: string;
   description: string;
   preview_image_path: string | null;
@@ -24,6 +26,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({
+  id,
   title,
   description,
   preview_image_path,
@@ -69,45 +72,53 @@ export function ProjectCard({
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex gap-2">
-        {github_link && (
-          <Button variant="outline" size="sm" asChild className="flex-1">
-            <a
-              href={github_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2"
-            >
-              <Github className="h-4 w-4" />
-              Code
-            </a>
-          </Button>
-        )}
-        {live_demo_link && (
-          <Button variant="outline" size="sm" asChild className="flex-1">
-            <a
-              href={live_demo_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2"
-            >
-              <ExternalLink className="h-4 w-4" />
-              Demo
-            </a>
-          </Button>
-        )}
-        {x_link && (
-          <Button variant="outline" size="sm" asChild>
-            <a
-              href={x_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="X (Twitter) link"
-            >
-              <Twitter className="h-4 w-4" />
-            </a>
-          </Button>
-        )}
+      <CardFooter className="flex flex-col gap-2">
+        <Button variant="default" size="sm" asChild className="w-full">
+          <Link to={`/projects/${id}`} className="flex items-center gap-2">
+            <Eye className="h-4 w-4" />
+            View Details
+          </Link>
+        </Button>
+        <div className="flex gap-2 w-full">
+          {github_link && (
+            <Button variant="outline" size="sm" asChild className="flex-1">
+              <a
+                href={github_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <Github className="h-4 w-4" />
+                Code
+              </a>
+            </Button>
+          )}
+          {live_demo_link && (
+            <Button variant="outline" size="sm" asChild className="flex-1">
+              <a
+                href={live_demo_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Demo
+              </a>
+            </Button>
+          )}
+          {x_link && (
+            <Button variant="outline" size="sm" asChild>
+              <a
+                href={x_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X (Twitter) link"
+              >
+                <Twitter className="h-4 w-4" />
+              </a>
+            </Button>
+          )}
+        </div>
       </CardFooter>
     </Card>
   );

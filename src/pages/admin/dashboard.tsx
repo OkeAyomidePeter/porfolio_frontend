@@ -2,13 +2,19 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FolderKanban, BookOpen, Award, User } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getProjects, getBlogs, getCertifications } from "@/lib/data-utils";
+import {
+  getProjects,
+  getBlogs,
+  getCertifications,
+  getPapers,
+} from "@/lib/data-utils";
 
 export function AdminDashboard() {
   const [counts, setCounts] = useState({
     projects: 0,
     blogs: 0,
     certifications: 0,
+    papers: 0,
   });
 
   useEffect(() => {
@@ -16,16 +22,18 @@ export function AdminDashboard() {
 
     const fetchCounts = async () => {
       try {
-        const [projects, blogs, certs] = await Promise.all([
+        const [projects, blogs, certs, papers] = await Promise.all([
           getProjects(),
           getBlogs(),
           getCertifications(),
+          getPapers(),
         ]);
         if (isMounted) {
           setCounts({
             projects: projects.length,
             blogs: blogs.length,
             certifications: certs.length,
+            papers: papers.length,
           });
         }
       } catch (error) {
@@ -61,6 +69,13 @@ export function AdminDashboard() {
       icon: Award,
       link: "/admin/certifications",
       color: "text-purple-600",
+    },
+    {
+      title: "Research Papers",
+      count: counts.papers,
+      icon: BookOpen,
+      link: "/admin/papers",
+      color: "text-cyan-600",
     },
     {
       title: "Profile",

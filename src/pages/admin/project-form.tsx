@@ -27,6 +27,7 @@ type ProjectFormState = {
   githubLink: string;
   liveDemoLink: string;
   xLink: string;
+  content: string;
 };
 
 const defaultState: ProjectFormState = {
@@ -37,6 +38,7 @@ const defaultState: ProjectFormState = {
   githubLink: "",
   liveDemoLink: "",
   xLink: "",
+  content: "",
 };
 
 export function ProjectForm() {
@@ -74,6 +76,7 @@ export function ProjectForm() {
           githubLink: project.github_link ?? "",
           liveDemoLink: project.live_demo_link ?? "",
           xLink: project.x_link ?? "",
+          content: project.content || "",
         });
         setExistingImage(project.preview_image_path ?? null);
       } catch (error) {
@@ -101,7 +104,7 @@ export function ProjectForm() {
     .filter((tech) => tech.length > 0);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     if (name === "techStackInput") {
@@ -131,6 +134,7 @@ export function ProjectForm() {
     if (formState.liveDemoLink)
       formData.append("live_demo_link", formState.liveDemoLink);
     if (formState.xLink) formData.append("x_link", formState.xLink);
+    formData.append("content", formState.content);
     if (imageFile) {
       formData.append("preview_image", imageFile);
     }
@@ -205,6 +209,21 @@ export function ProjectForm() {
                   onChange={handleChange}
                   rows={4}
                   required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="content">
+                  Long Explanation / Details (Markdown)
+                </Label>
+                <Textarea
+                  id="content"
+                  name="content"
+                  value={formState.content}
+                  onChange={handleChange}
+                  rows={10}
+                  className="font-mono text-sm"
+                  placeholder="Explain the technical details, architecture, and impact of your project..."
                 />
               </div>
 

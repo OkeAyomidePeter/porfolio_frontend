@@ -15,6 +15,7 @@ export interface Project {
   id: number;
   title: string;
   description: string;
+  content: string;
   preview_image_path: string | null;
   tech_stack: string[];
   category: string;
@@ -46,6 +47,18 @@ export interface Profile {
   interests: string[];
   what_i_work_on: string;
   cv_path?: string | null;
+}
+
+export interface ResearchPaper {
+  id: number;
+  title: string;
+  abstract: string;
+  content: string;
+  date: string;
+  authors: string[];
+  tags: string[];
+  thumbnail_path: string | null;
+  pdf_path: string | null;
 }
 
 export interface ApiError extends Error {
@@ -80,11 +93,39 @@ export function buildAssetUrl(path: string | null | undefined): string | null {
   return buildUrl(`/${ensureStaticPath(path)}`);
 }
 
+interface CacheItem<T> {
+  data: T;
+  timestamp: number;
+}
+
+const CACHE_TTL = 3600 * 1000; // 1 hour in milliseconds
+
 async function apiRequest<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
-  const response = await fetch(buildUrl(path), {
+  const url = buildUrl(path);
+  const isGet = !options.method || options.method === "GET";
+
+  if (isGet) {
+    const cached = localStorage.getItem(url);
+    if (cached) {
+      try {
+        const { data, timestamp }: CacheItem<T> = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_TTL) {
+          console.log(`[Cache] Serving ${path} from storage`);
+          return data;
+        } else {
+          localStorage.removeItem(url);
+        }
+      } catch (e) {
+        console.warn(`[Cache] Failed to parse cache for ${path}`, e);
+        localStorage.removeItem(url);
+      }
+    }
+  }
+
+  const response = await fetch(url, {
     credentials: "include",
     ...options,
   });
@@ -99,7 +140,25 @@ async function apiRequest<T>(
     return undefined as T;
   }
 
-  return (await response.json()) as T;
+  const data = (await response.json()) as T;
+
+  if (isGet) {
+    try {
+      const cacheItem: CacheItem<T> = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(url, JSON.stringify(cacheItem));
+    } catch (e) {
+      console.warn(`[Cache] Failed to store ${path} in cache`, e);
+    }
+  } else {
+    // Invalidate cache for this collection if we're mutating data
+    // Simple strategy: clear all cache for mutations
+    localStorage.clear();
+  }
+
+  return data;
 }
 
 // Auth
@@ -140,7 +199,7 @@ export async function createBlog(formData: FormData): Promise<Blog> {
 
 export async function updateBlog(
   id: number,
-  formData: FormData
+  formData: FormData,
 ): Promise<Blog> {
   return apiRequest<Blog>(`/blogs/${id}`, {
     method: "PUT",
@@ -176,7 +235,7 @@ export async function createProject(formData: FormData): Promise<Project> {
 
 export async function updateProject(
   id: number,
-  formData: FormData
+  formData: FormData,
 ): Promise<Project> {
   return apiRequest<Project>(`/projects/${id}`, {
     method: "PUT",
@@ -198,7 +257,7 @@ export async function getCertification(id: number): Promise<Certification> {
 }
 
 export async function createCertification(
-  formData: FormData
+  formData: FormData,
 ): Promise<Certification> {
   return apiRequest<Certification>("/certs", {
     method: "POST",
@@ -208,7 +267,7 @@ export async function createCertification(
 
 export async function updateCertification(
   id: number,
-  formData: FormData
+  formData: FormData,
 ): Promise<Certification> {
   return apiRequest<Certification>(`/certs/${id}`, {
     method: "PUT",
@@ -230,7 +289,7 @@ export async function getProfile(id: number): Promise<Profile> {
 }
 
 export async function createProfile(
-  data: Omit<Profile, "id">
+  data: Omit<Profile, "id">,
 ): Promise<Profile> {
   return apiRequest<Profile>("/profiles", {
     method: "POST",
@@ -243,7 +302,7 @@ export async function createProfile(
 
 export async function updateProfile(
   id: number,
-  data: Omit<Profile, "id">
+  data: Omit<Profile, "id">,
 ): Promise<Profile> {
   return apiRequest<Profile>(`/profiles/${id}`, {
     method: "PUT",
@@ -273,4 +332,34 @@ export async function uploadCv(formData: FormData): Promise<Profile> {
     method: "POST",
     body: formData,
   });
+}
+
+// Research Papers
+export async function getPapers(): Promise<ResearchPaper[]> {
+  return apiRequest<ResearchPaper[]>("/papers");
+}
+
+export async function getPaper(id: number): Promise<ResearchPaper> {
+  return apiRequest<ResearchPaper>(`/papers/${id}`);
+}
+
+export async function createPaper(formData: FormData): Promise<ResearchPaper> {
+  return apiRequest<ResearchPaper>("/papers", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function updatePaper(
+  id: number,
+  formData: FormData,
+): Promise<ResearchPaper> {
+  return apiRequest<ResearchPaper>(`/papers/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
+}
+
+export async function deletePaper(id: number): Promise<void> {
+  await apiRequest<void>(`/papers/${id}`, { method: "DELETE" });
 }

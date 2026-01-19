@@ -9,6 +9,7 @@ const navLinks = [
   { path: "/", label: "Home" },
   { path: "/projects", label: "Projects" },
   { path: "/blog", label: "Blog" },
+  { path: "/papers", label: "Papers" },
   { path: "/certifications", label: "Certifications" },
   { path: "/about", label: "About" },
   { path: "/contact", label: "Contact" },
@@ -65,7 +66,7 @@ export function Header() {
       prefersDarkMedia.removeEventListener("change", handleMediaChange);
       window.removeEventListener(
         "theme-change",
-        handleThemeChange as EventListener
+        handleThemeChange as EventListener,
       );
       window.removeEventListener("storage", handleStorage);
     };

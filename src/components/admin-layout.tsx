@@ -17,6 +17,7 @@ const adminNavLinks = [
   { path: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/admin/projects", label: "Projects", icon: FolderKanban },
   { path: "/admin/blogs", label: "Blogs", icon: BookOpen },
+  { path: "/admin/papers", label: "Research Papers", icon: BookOpen },
   { path: "/admin/certifications", label: "Certifications", icon: Award },
   { path: "/admin/profile", label: "Profile", icon: User },
   { path: "/admin/cv", label: "CV", icon: FileText },

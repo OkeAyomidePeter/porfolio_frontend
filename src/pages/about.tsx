@@ -9,6 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getPrimaryProfile } from "@/lib/data-utils";
+import { Markdown } from "@/components/markdown";
 
 const defaultProfile = {
   name: "",
@@ -61,7 +62,7 @@ export function About() {
           <p className="text-xl text-muted-foreground">{title}</p>
           {location && <p className="text-muted-foreground">{location}</p>}
         </div>
-        <p className="text-lg leading-7">{bio}</p>
+        <Markdown content={bio} className="text-lg leading-7 mx-auto" />
       </section>
 
       <Separator />
