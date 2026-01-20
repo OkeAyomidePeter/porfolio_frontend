@@ -41,8 +41,16 @@ export function Projects() {
   }, []);
 
   const categories = Array.from(
-    new Set(projectsData.map((project) => project.category).filter(Boolean))
-  );
+    new Set(
+      projectsData.flatMap((project) =>
+        Array.isArray(project.category)
+          ? project.category
+          : project.category
+            ? [project.category]
+            : [],
+      ),
+    ),
+  ).filter(Boolean);
 
   const filteredProjects = projectsData.filter((project) => {
     const techStack = Array.isArray(project.tech_stack)
@@ -52,11 +60,14 @@ export function Projects() {
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       techStack.some((tech) =>
-        tech.toLowerCase().includes(searchQuery.toLowerCase())
+        tech.toLowerCase().includes(searchQuery.toLowerCase()),
       );
 
     const matchesCategory =
-      selectedCategory === null || project.category === selectedCategory;
+      selectedCategory === null ||
+      (Array.isArray(project.category)
+        ? project.category.includes(selectedCategory)
+        : project.category === selectedCategory);
 
     return matchesSearch && matchesCategory;
   });

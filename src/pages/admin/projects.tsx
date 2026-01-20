@@ -92,8 +92,15 @@ export function AdminProjects() {
                   alt={project.title}
                   className="h-full w-full object-cover"
                 />
-                <div className="absolute top-2 right-2">
-                  <Badge variant="secondary">{project.category}</Badge>
+                <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
+                  {(Array.isArray(project.category)
+                    ? project.category
+                    : [project.category]
+                  ).map((cat) => (
+                    <Badge key={cat} variant="secondary">
+                      {cat}
+                    </Badge>
+                  ))}
                 </div>
               </div>
               <CardHeader>

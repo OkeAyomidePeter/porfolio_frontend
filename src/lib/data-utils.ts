@@ -18,7 +18,7 @@ export interface Project {
   content: string;
   preview_image_path: string | null;
   tech_stack: string[];
-  category: string;
+  category: string[];
   github_link?: string | null;
   live_demo_link?: string | null;
   x_link?: string | null;

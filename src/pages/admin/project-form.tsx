@@ -22,7 +22,7 @@ import {
 type ProjectFormState = {
   title: string;
   description: string;
-  category: string;
+  categoryInput: string;
   techStackInput: string;
   githubLink: string;
   liveDemoLink: string;
@@ -33,7 +33,7 @@ type ProjectFormState = {
 const defaultState: ProjectFormState = {
   title: "",
   description: "",
-  category: "",
+  categoryInput: "",
   techStackInput: "",
   githubLink: "",
   liveDemoLink: "",
@@ -71,7 +71,9 @@ export function ProjectForm() {
         setFormState({
           title: project.title,
           description: project.description,
-          category: project.category,
+          categoryInput: Array.isArray(project.category)
+            ? project.category.join(", ")
+            : project.category,
           techStackInput: project.tech_stack.join(", "),
           githubLink: project.github_link ?? "",
           liveDemoLink: project.live_demo_link ?? "",
@@ -100,8 +102,13 @@ export function ProjectForm() {
 
   const techStackArray = formState.techStackInput
     .split(",")
-    .map((tech) => tech.trim())
-    .filter((tech) => tech.length > 0);
+    .map((tech: string) => tech.trim())
+    .filter((tech: string) => tech.length > 0);
+
+  const categoryArray = formState.categoryInput
+    .split(",")
+    .map((cat: string) => cat.trim())
+    .filter((cat: string) => cat.length > 0);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -109,6 +116,8 @@ export function ProjectForm() {
     const { name, value } = e.target;
     if (name === "techStackInput") {
       setFormState((prev) => ({ ...prev, techStackInput: value }));
+    } else if (name === "categoryInput") {
+      setFormState((prev) => ({ ...prev, categoryInput: value }));
     } else {
       setFormState((prev) => ({ ...prev, [name]: value }));
     }
@@ -127,7 +136,7 @@ export function ProjectForm() {
     const formData = new FormData();
     formData.append("title", formState.title);
     formData.append("description", formState.description);
-    formData.append("category", formState.category);
+    formData.append("category", JSON.stringify(categoryArray));
     formData.append("tech_stack", JSON.stringify(techStackArray));
     if (formState.githubLink)
       formData.append("github_link", formState.githubLink);
@@ -257,11 +266,11 @@ export function ProjectForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category">Category *</Label>
+                <Label htmlFor="category">Category (comma-separated) *</Label>
                 <Input
                   id="category"
-                  name="category"
-                  value={formState.category}
+                  name="categoryInput"
+                  value={formState.categoryInput}
                   onChange={handleChange}
                   placeholder="e.g., Web Development, AI/ML"
                   required

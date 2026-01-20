@@ -119,9 +119,20 @@ export function ProjectDetail() {
               <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">
                 Category
               </h3>
-              <Badge variant="secondary" className="text-sm px-3 uppercase">
-                {project.category}
-              </Badge>
+              <div className="flex flex-wrap gap-2">
+                {(Array.isArray(project.category)
+                  ? project.category
+                  : [project.category]
+                ).map((cat) => (
+                  <Badge
+                    key={cat}
+                    variant="secondary"
+                    className="text-sm px-3 uppercase"
+                  >
+                    {cat}
+                  </Badge>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-3">
