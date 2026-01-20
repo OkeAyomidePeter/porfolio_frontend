@@ -1,0 +1,23 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Peter Ayomide",
+  "alternateName": "Invictus",
+  "url": "https://invictus-beta.vercel.app/",
+  "jobTitle": "Software Engineer",
+  "description": "Software engineer specializing in AI/ML, Web3, and scalable system architecture.",
+  "sameAs": [
+    "https://github.com/peter-ayomide",
+    "https://twitter.com/invictus_dev"
+  ],
+  "knowsAbout": [
+    "AI",
+    "Machine Learning",
+    "Web3",
+    "Blockchain",
+    "Python",
+    "TypeScript",
+    "React",
+    "Software Engineering"
+  ]
+}
